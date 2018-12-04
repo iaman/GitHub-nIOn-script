@@ -1,10 +1,10 @@
 // ==UserScript==
-// @name        GitHub Dark Script
-// @version     2.4.11
-// @description GitHub Dark in userscript form, with a settings panel
+// @name        GitHub nIOn
+// @version     0.0.1
+// @description Fork of GitHub Dark in userscript form, with a settings panel
 // @license     MIT
-// @author      StylishThemes
-// @namespace   https://github.com/StylishThemes
+// @author      Iaman
+// @namespace   https://github.com/Iaman
 // @include     /^https?://((blog|gist|guides|help|raw|status|developer)\.)?github\.com/((?!generated_pages\/preview).)*$/
 // @include     /^https://*.githubusercontent.com/*$/
 // @include     /^https://*graphql-explorer.githubapp.com/*$/
@@ -28,8 +28,8 @@
 // @require     https://greasyfork.org/scripts/15563-jscolor/code/jscolor.js?version=106439
 // @require     https://greasyfork.org/scripts/28721-mutations/code/mutations.js?version=634242
 // @icon        https://avatars3.githubusercontent.com/u/6145677?v=3&s=200
-// @updateURL   https://raw.githubusercontent.com/StylishThemes/GitHub-Dark-Script/master/github-dark-script.user.js
-// @downloadURL https://raw.githubusercontent.com/StylishThemes/GitHub-Dark-Script/master/github-dark-script.user.js
+// @updateURL   https://raw.githubusercontent.com/iaman/GitHub-nIOn/master/github-dark-script.user.js
+// @downloadURL https://raw.githubusercontent.com/iaman/GitHub-nIOn/master/github-dark-script.user.js
 // ==/UserScript==
 /* global GM, jscolor */
 /* jshint esnext:true, unused:true */
@@ -48,14 +48,14 @@
     keyboardDelay = 1000,
 
     // base urls to fetch style and package.json
-    root = "https://raw.githubusercontent.com/StylishThemes/GitHub-Dark/master/",
+    root = "https://raw.githubusercontent.com/iaman/GitHub-nIOn/master/",
 
     defaults = {
       attach : "scroll",
       color  : "#4183C4",
       enable : true,
       font   : "Menlo",
-      image  : "url('data:image/png;base64,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')",
+      image  : "url('')",
       tab    : 0, // 0 is disabled
       theme  : "Twilight", // GitHub
       themeCm: "Twilight", // CodeMirror
@@ -670,26 +670,6 @@
                   <input class="ghd-color ghd-right" type="text" value="#4183C4">
                   <span id="ghd-swatch" class="ghd-right"></span>
                 </p>
-                <h4>Background</h4>
-                <p>
-                  <label>Image:</label>
-                  <input class="ghd-image ghd-right" type="text">
-                  <a href="https://github.com/StylishThemes/GitHub-Dark/wiki/Image" class="tooltipped tooltipped-e" aria-label="Click to learn about GitHub's Content Security&#10;Policy and how to add a custom image">${icon}</a>
-                </p>
-                <p>
-                  <label>Image type:</label>
-                  <select class="ghd-type ghd-right form-select">
-                    <option value="tiled">Tiled</option>
-                    <option value="fit">Fit window</option>
-                  </select>
-                </p>
-                <p>
-                  <label>Image attachment:</label>
-                  <select class="ghd-attach ghd-right form-select">
-                    <option value="scroll">Scroll</option>
-                    <option value="fixed">Fixed</option>
-                  </select>
-                </p>
                 <h4>Code</h4>
                 <p><label>GitHub Theme:</label> <select class="ghd-theme ghd-right form-select">${opts}</select></p>
                 <p><label>CodeMirror Theme:</label> <select class="ghd-themecm ghd-right form-select">${optscm}</select></p>
@@ -1261,11 +1241,11 @@
     isInitialized = true;
   }
 
-	if (document.readyState === "loading") {
-		on(document, "DOMContentLoaded", buildOnLoad);
-	} else {
-		buildOnLoad();
-	}
+  if (document.readyState === "loading") {
+    on(document, "DOMContentLoaded", buildOnLoad);
+  } else {
+    buildOnLoad();
+  }
 
   /* utility functions */
   function isBool(name) {
